@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369972350639",
+    "project_id": "futtertutorialnotesapp-41cd7",
+    "storage_bucket": "futtertutorialnotesapp-41cd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369972350639:android:83bb52cced2a810e030e5a",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAj_MwgHXFO3H4NPssVNyLNCNDESgqLT0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
