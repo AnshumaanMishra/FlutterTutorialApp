@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
+
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -65,30 +67,34 @@ class _HomePageState extends State<LoginView> {
               final email = _eMail.text;
               final password = _passWord.text;
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                print(" UC = \n");
-                print(userCredential);
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/home/', (route) => false);
+                // devtools.log(" UC = \n");
+                // devtools.log(userCredential.toString());
+                if (context.mounted) {
+                  Navigator.of(context)
+                    .pushNamedAndRemoveUntil(
+                    '/home/',
+                    (route) => false,
+                  );
+                }
               } on FirebaseAuthException catch (e) {
-                // print("Error Code: ");
-                // print(e.runtimeType);
+                // devtools.log("Error Code: ");
+                // devtools.log(e.runtimeType);
                 switch (e.code) {
                   case "user-not-found":
-                    print('Error! User Not Found');
+                    devtools.log('Error! User Not Found');
                     break;
                   case "wrong-password":
-                    print('Error! Invalid Password');
+                    devtools.log('Error! Invalid Password');
                     break;
                   case "invalid-email":
-                    print('Error! Invalid e-Mail');
+                    devtools.log('Error! Invalid e-Mail');
                     break;
                   default:
-                    print(e.code);
+                    devtools.log(e.code);
                 }
               }
             },

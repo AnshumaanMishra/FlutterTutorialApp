@@ -36,7 +36,7 @@ class _NotesViewState extends State<NotesView> {
                   }
                   break;
               }
-              // debugPrint(value.toString());
+              
             },
             itemBuilder: (context) {
               return const [
@@ -56,27 +56,19 @@ class _NotesViewState extends State<NotesView> {
           //     icon: const Icon(Icons.logout_rounded))
         ],
       ),
-      // body: TextButton(
-      //   style: TextButton.styleFrom(
-      //     backgroundColor: Colors.blue,
-      //     foregroundColor: Colors.white,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.all(Radius.circular(10)),
-      //     ),
-      //   ),
-      //   onPressed: () {
-
-      //   child: const Text("LogOut"),
-      // ),
     );
   }
 }
 
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog(
+    barrierDismissible: true,
+    // barrierColor: Colors.red,
     context: context,
     builder: (context) {
       return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5))),
         title: const Text("Sign Out"),
         content: const Text("Are you sure you want to sign out?"),
         actions: [
