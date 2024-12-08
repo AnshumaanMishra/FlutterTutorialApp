@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:futtertutorialnotesapp/constants/routes.dart';
 // import 'dart:developer' as devtools show log;
 
 
@@ -46,20 +47,12 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             ),
             onPressed: () async {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login/', (route) => false);
+                  .pushNamedAndRemoveUntil(loginRoute, (route) => false);
             },
             child: Text("Login"),
           ),
         ],
       ),
     );
-    // Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text("Verify Your eMail"),
-    //     foregroundColor: Colors.white,
-    //     backgroundColor: Colors.blue,
-    //   ),
-    //   body:
-    // );
   }
 }
