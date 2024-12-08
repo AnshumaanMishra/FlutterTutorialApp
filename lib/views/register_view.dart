@@ -79,8 +79,6 @@ class _RegisterViewState extends State<RegisterView> {
                 devtools.log(" UC = \n");
                 devtools.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
-                // devtools.log("Error Code: ");
-                // devtools.log(e.runtimeType);
                 switch (e.code) {
                   case "invalid-email":
                     devtools.log('Error! Invalid e-Mail');

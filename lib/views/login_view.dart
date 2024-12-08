@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
+import 'package:futtertutorialnotesapp/constants/routes.dart';
+import 'package:futtertutorialnotesapp/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -71,31 +71,38 @@ class _HomePageState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                // devtools.log(" UC = \n");
-                // devtools.log(userCredential.toString());
                 if (context.mounted) {
-                  Navigator.of(context)
-                    .pushNamedAndRemoveUntil(
-                    '/home/',
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    homeRoute,
                     (route) => false,
                   );
                 }
               } on FirebaseAuthException catch (e) {
-                // devtools.log("Error Code: ");
-                // devtools.log(e.runtimeType);
                 switch (e.code) {
+                  case "invalid-email":
+                    if (context.mounted) {
+                      showErrorDialog(context, "Error! Invalid e-Mail");
+                    }
+                    break;
                   case "user-not-found":
-                    devtools.log('Error! User Not Found');
+                    if (context.mounted) {
+                      showErrorDialog(context, "Error! User Not Found");
+                    }
                     break;
                   case "wrong-password":
-                    devtools.log('Error! Invalid Password');
-                    break;
-                  case "invalid-email":
-                    devtools.log('Error! Invalid e-Mail');
+                    if (context.mounted) {
+                      showErrorDialog(context, "Error! Invalid e-Mail");
+                    }
                     break;
                   default:
-                    devtools.log(e.code);
+                    if (context.mounted) {
+                      showErrorDialog(context, 'Error! ${e.code}');
+                    }
                 }
+              } catch (e) {
+                if (context.mounted) {
+                  showErrorDialog(context, e.toString());
+                }                
               }
             },
             child: Text("Login"),
