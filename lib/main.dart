@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
             print(user);
             return const LoginView();
           default:
-            return const Text("Loading...");
+            return CircularProgressIndicator();
         }
       },
       // child:
