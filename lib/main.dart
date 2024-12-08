@@ -5,7 +5,7 @@ import 'package:futtertutorialnotesapp/firebase_options.dart';
 import 'package:futtertutorialnotesapp/views/login_view.dart';
 import 'package:futtertutorialnotesapp/views/register_view.dart';
 import 'package:futtertutorialnotesapp/views/verify_email_view.dart';
-// import 'package:futtertutorialnotesapp/views/login_view.dart';
+import 'package:futtertutorialnotesapp/views/notes_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +19,7 @@ void main() {
     routes: {
       '/login/': (context) => LoginView(),
       '/register/': (context) => RegisterView(),
+      '/home/': (context) => HomePage(),
     },
   ));
 }
@@ -39,21 +40,7 @@ class HomePage extends StatelessWidget {
             if (user != null) {
               // print(user);
               if (user.emailVerified) {
-                return TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/register/', (route) => false);
-                  },
-                  child: const Text("LogOut"),
-                );
+                return NotesView();
               } else {
                 // return const LoginView();
                 return VerifyEmailView();
