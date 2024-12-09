@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:futtertutorialnotesapp/constants/routes.dart';
 // import 'dart:developer' as devtools show log;
 
-
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
 
@@ -12,6 +11,13 @@ class VerifyEmailView extends StatefulWidget {
 }
 
 class _VerifyEmailViewState extends State<VerifyEmailView> {
+  @override
+  void initState() {
+    final user = FirebaseAuth.instance.currentUser;
+    user?.sendEmailVerification();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +28,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       ),
       body: Column(
         children: [
-          Text("Please Verify Your eMail"),
+          Text(
+              "A Verification eMail has been sent to your registered eMail address, kindly click on the link to continue."),
+          Text(
+              "If you havent Recieved the eMail, please click on the button to resend the verification eMail:"),
           TextButton(
             style: TextButton.styleFrom(
               backgroundColor: Colors.blue,
@@ -47,9 +56,31 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             ),
             onPressed: () async {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                  .pushNamedAndRemoveUntil(
+                loginRoute,
+                (route) => false,
+              );
             },
             child: Text("Login"),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  registerRoute,
+                  (route) => false,
+                );
+              }
+            },
+            child: Text("Restart"),
           ),
         ],
       ),

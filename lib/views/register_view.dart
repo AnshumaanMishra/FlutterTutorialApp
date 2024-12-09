@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:futtertutorialnotesapp/constants/routes.dart';
-
+import 'package:futtertutorialnotesapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -67,30 +64,46 @@ class _RegisterViewState extends State<RegisterView> {
               ),
             ),
             onPressed: () async {
-              // await
               final email = _eMail.text;
               final password = _passWord.text;
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                devtools.log(" UC = \n");
-                devtools.log(userCredential.toString());
+                // final user = FirebaseAuth.instance.currentUser;
+                // await user?.sendEmailVerification();
+                if (context.mounted) {
+                  Navigator.of(context).pushNamed(verificationRoute);
+                }
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
                   case "invalid-email":
-                    devtools.log('Error! Invalid e-Mail');
+                    if (context.mounted) {
+                      await showErrorDialog(context, "Error! Invalid e-Mail");
+                    }
                     break;
                   case "email-already-in-use":
-                    devtools.log('Error! Invalid e-Mail, already in use');
+                    if (context.mounted) {
+                      await showErrorDialog(
+                          context, 'Error! Invalid e-Mail, already in use');
+                    }
                     break;
                   case "weak-password":
-                    devtools.log('Error! Password too weak, please try again');
+                    if (context.mounted) {
+                      await showErrorDialog(context,
+                          'Error! Password too weak, please try again');
+                    }
                     break;
                   default:
-                    devtools.log(e.code);
+                    if (context.mounted) {
+                      await showErrorDialog(context, e.toString());
+                    }
+                    break;
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  showErrorDialog(context, e.toString());
                 }
               }
             },
@@ -105,8 +118,8 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    verificationRoute, (route) => false);
               },
               child: const Text("Login")),
         ],

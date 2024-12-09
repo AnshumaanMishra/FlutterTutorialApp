@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:futtertutorialnotesapp/constants/routes.dart';
 import 'package:futtertutorialnotesapp/utilities/show_error_dialog.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,6 +19,16 @@ class _HomePageState extends State<LoginView> {
 
   @override
   void initState() {
+    if (FirebaseAuth.instance.currentUser?.emailVerified ?? false) {
+      devtools.log(
+          FirebaseAuth.instance.currentUser?.toString() ?? "No user found");
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        homeRoute,
+        (route) => false,
+      );
+    } else {
+      devtools.log("No User Found");
+    }
     _eMail = TextEditingController();
     _passWord = TextEditingController();
     super.initState();
@@ -72,10 +85,18 @@ class _HomePageState extends State<LoginView> {
                   password: password,
                 );
                 if (context.mounted) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    homeRoute,
-                    (route) => false,
-                  );
+                  if (FirebaseAuth.instance.currentUser?.emailVerified ??
+                      false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      homeRoute,
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      verificationRoute,
+                      (route) => false,
+                    );
+                  }
                 }
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
@@ -102,7 +123,7 @@ class _HomePageState extends State<LoginView> {
               } catch (e) {
                 if (context.mounted) {
                   showErrorDialog(context, e.toString());
-                }                
+                }
               }
             },
             child: Text("Login"),

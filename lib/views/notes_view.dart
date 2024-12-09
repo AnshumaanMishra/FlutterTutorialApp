@@ -4,7 +4,10 @@ import 'dart:developer' as devtools show log;
 
 import 'package:futtertutorialnotesapp/constants/routes.dart';
 
-enum MenuAction { logout }
+enum MenuAction {
+  logout,
+  accountData,
+}
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -23,6 +26,7 @@ class _NotesViewState extends State<NotesView> {
         foregroundColor: Colors.white,
         actions: <Widget>[
           PopupMenuButton<MenuAction>(
+            icon: const Icon(Icons.account_circle),
             onSelected: (value) async {
               devtools.log(value.toString());
               switch (value) {
@@ -37,25 +41,25 @@ class _NotesViewState extends State<NotesView> {
                     }
                   }
                   break;
+                case MenuAction.accountData:
+                  devtools.log(FirebaseAuth.instance.currentUser?.email ??
+                      "No User Found");
               }
-              
             },
             itemBuilder: (context) {
-              return const [
+              return [
+                PopupMenuItem<MenuAction>(
+                  value: MenuAction.accountData,
+                  child: Text(FirebaseAuth.instance.currentUser?.email ??
+                      "No User Found"),
+                ),
                 PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
-                  child: Text("Log Out"),
+                  child: const Text("Log Out"),
                 ),
               ];
             },
-          )
-          // IconButton(
-          //     onPressed: () {
-          //       FirebaseAuth.instance.signOut();
-          //       Navigator.of(context)
-          //           .pushNamedAndRemoveUntil('NotesView', (route) => false);
-          //     },
-          //     icon: const Icon(Icons.logout_rounded))
+          ),
         ],
       ),
     );
