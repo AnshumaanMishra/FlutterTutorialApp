@@ -1,17 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
-
 import 'package:futtertutorialnotesapp/constants/routes.dart';
+import 'package:futtertutorialnotesapp/enums/menu_action.dart';
+import 'package:futtertutorialnotesapp/services/auth/auth_service.dart';
 
-enum MenuAction {
-  logout,
-  accountData,
-}
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
-
   @override
   State<NotesView> createState() => _NotesViewState();
 }
@@ -34,7 +29,7 @@ class _NotesViewState extends State<NotesView> {
                   final userResponse = await showLogOutDialog(context);
                   devtools.log(userResponse.toString());
                   if (userResponse) {
-                    await FirebaseAuth.instance.signOut();
+                    await AuthService.firebase().logOut();
                     if (context.mounted) {
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil(loginRoute, (_) => false);
@@ -42,7 +37,7 @@ class _NotesViewState extends State<NotesView> {
                   }
                   break;
                 case MenuAction.accountData:
-                  devtools.log(FirebaseAuth.instance.currentUser?.email ??
+                  devtools.log(AuthService.firebase().currentUser?.email ??
                       "No User Found");
               }
             },
@@ -50,7 +45,7 @@ class _NotesViewState extends State<NotesView> {
               return [
                 PopupMenuItem<MenuAction>(
                   value: MenuAction.accountData,
-                  child: Text(FirebaseAuth.instance.currentUser?.email ??
+                  child: Text(AuthService.firebase().currentUser?.email ??
                       "No User Found"),
                 ),
                 PopupMenuItem<MenuAction>(

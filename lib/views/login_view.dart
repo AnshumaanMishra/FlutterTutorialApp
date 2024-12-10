@@ -1,8 +1,7 @@
-import 'dart:math';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:futtertutorialnotesapp/constants/routes.dart';
+import 'package:futtertutorialnotesapp/services/auth/auth_exceptions.dart';
+import 'package:futtertutorialnotesapp/services/auth/auth_service.dart';
 import 'package:futtertutorialnotesapp/utilities/show_error_dialog.dart';
 import 'dart:developer' as devtools show log;
 
@@ -19,9 +18,9 @@ class _HomePageState extends State<LoginView> {
 
   @override
   void initState() {
-    if (FirebaseAuth.instance.currentUser?.emailVerified ?? false) {
+    if (AuthService.firebase().currentUser?.isEmailVerified ?? false) {
       devtools.log(
-          FirebaseAuth.instance.currentUser?.toString() ?? "No user found");
+          AuthService.firebase().currentUser?.toString() ?? "No user found");
       Navigator.of(context).pushNamedAndRemoveUntil(
         homeRoute,
         (route) => false,
@@ -80,12 +79,12 @@ class _HomePageState extends State<LoginView> {
               final email = _eMail.text;
               final password = _passWord.text;
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().logIn(
                   email: email,
                   password: password,
                 );
                 if (context.mounted) {
-                  if (FirebaseAuth.instance.currentUser?.emailVerified ??
+                  if (AuthService.firebase().currentUser?.isEmailVerified ??
                       false) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       homeRoute,
@@ -98,33 +97,23 @@ class _HomePageState extends State<LoginView> {
                     );
                   }
                 }
-              } on FirebaseAuthException catch (e) {
-                switch (e.code) {
-                  case "invalid-email":
-                    if (context.mounted) {
-                      showErrorDialog(context, "Error! Invalid e-Mail");
-                    }
-                    break;
-                  case "user-not-found":
-                    if (context.mounted) {
-                      showErrorDialog(context, "Error! User Not Found");
-                    }
-                    break;
-                  case "wrong-password":
-                    if (context.mounted) {
-                      showErrorDialog(context, "Error! Invalid e-Mail");
-                    }
-                    break;
-                  default:
-                    if (context.mounted) {
-                      showErrorDialog(context, 'Error! ${e.code}');
-                    }
-                }
-              } catch (e) {
+              } on InvalidEmailAuthException {
                 if (context.mounted) {
-                  showErrorDialog(context, e.toString());
+                  showErrorDialog(context, "Error! Invalid e-Mail");
                 }
-              }
+              } on UserNotFoundAuthException {
+                if (context.mounted) {
+                  showErrorDialog(context, "Error! User Not Found");
+                }
+              } on WrongPasswordAuthException {
+                if (context.mounted) {
+                  showErrorDialog(context, "Error! Invalid e-Mail");
+                }
+              } on GenericAuthException {
+                if (context.mounted) {
+                  showErrorDialog(context, 'Error!');
+                }
+              } 
             },
             child: Text("Login"),
           ),

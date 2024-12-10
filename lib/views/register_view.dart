@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:futtertutorialnotesapp/constants/routes.dart';
+import 'package:futtertutorialnotesapp/services/auth/auth_exceptions.dart';
+import 'package:futtertutorialnotesapp/services/auth/auth_service.dart';
 import 'package:futtertutorialnotesapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -67,45 +68,32 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _eMail.text;
               final password = _passWord.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await AuthService.firebase().signUp(
                   email: email,
                   password: password,
                 );
-                // final user = FirebaseAuth.instance.currentUser;
-                // await user?.sendEmailVerification();
                 if (context.mounted) {
                   Navigator.of(context).pushNamed(verificationRoute);
                 }
-              } on FirebaseAuthException catch (e) {
-                switch (e.code) {
-                  case "invalid-email":
-                    if (context.mounted) {
-                      await showErrorDialog(context, "Error! Invalid e-Mail");
-                    }
-                    break;
-                  case "email-already-in-use":
+              } on InvalidEmailAuthException {
+                if (context.mounted) {
+                  await showErrorDialog(context, "Error! Invalid e-Mail");
+                }
+              } on EmailAlreadyInUseAuthException {
                     if (context.mounted) {
                       await showErrorDialog(
                           context, 'Error! Invalid e-Mail, already in use');
-                    }
-                    break;
-                  case "weak-password":
+                }
+              } on WeakPasswordAuthException {
                     if (context.mounted) {
                       await showErrorDialog(context,
                           'Error! Password too weak, please try again');
-                    }
-                    break;
-                  default:
+                }
+              } on GenericAuthException {
                     if (context.mounted) {
-                      await showErrorDialog(context, e.toString());
-                    }
-                    break;
+                  await showErrorDialog(context, "Error");
                 }
-              } catch (e) {
-                if (context.mounted) {
-                  showErrorDialog(context, e.toString());
-                }
-              }
+              }                
             },
             child: Text("Register"),
           ),
